@@ -10,12 +10,16 @@ map_data = [
 ]
 
 class Node:
-    def __init__(self, pos):
+    def __init__(self, parent_node, pos):
+        self.parent_node = parent_node
         self.pos = pos
-        self.data = data
+
         self.H = 0
         self.G = 0
         self.F = 0
+
+    def __eq__(self, other)
+        return self.pos == other.pos
 
     def calc_distance(self, pos1, pos2):
         # euclidean distance
@@ -25,7 +29,7 @@ class Node:
         self.H = self.calc_distance(target, self.pos)
     
     def set_g(self, current)
-        self.G = self.calc_distance(current, self.pos)
+        self.G = self.calc_distance(current.pos, self.pos)
     
     def set_f(self):
         self.F = self.H + self.G
@@ -38,8 +42,30 @@ class Node:
     
     def get_f(self):
         return self.F
-    
 
+def in_list(this_node, list):
+    for node in list:
+        if this_node == node:
+            return True 
+
+def path_finding(start_node):
+    openlist = [start_node]
+    closedlist = []
+    while current_node != target_node:
+        if current_node == target_node:
+            pass
+        else:
+            closedlist.append(current_node)
+            neighbours = find_neighbours(current_node)
+            for n in neighbours:
+                if n.get_g() < current_node.get_g() and in_list(n, closedlist):
+                    pass
+                elif n.get_g() > current_node.get_g() and in_list(n, openlist):
+                    pass
+                elif not in_list(n, openlist) and not in_list(n, closedlist):
+                    n.set_g(current_node)
+                    openlist.append(n)
+                        
 dirs = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
 
 start = (0,0)
@@ -72,4 +98,5 @@ visited_nodes = []
 
 def find_path():
     pass
+
 main()

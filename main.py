@@ -2,10 +2,10 @@ import math
 
 map_data = [
     # 0    1    2    3    4
-    [0x1, 0x0, 0x0, 0x0, 0x0], # 0
+    [0x1, 0x0, 0xb, 0x0, 0x2], # 0
     [0x0, 0x0, 0xb, 0x0, 0x0], # 1
     [0x0, 0x0, 0xb, 0x0, 0x0], # 2
-    [0x0, 0x0, 0x0, 0x0, 0x2], # 3
+    [0x0, 0x0, 0x0, 0x0, 0x0], # 3
     [0x0, 0x0, 0x0, 0x0, 0x0]  # 4
 ]
 
@@ -81,27 +81,29 @@ def find_path(start_pos, target_pos):
         print("not_visited : " + str(not_visited))
         not_visited.remove(currentNode)
         print("not_visited : " + str(not_visited))
+        print("\n")
         
         print("visited : " + str(visited))
         visited.append(currentNode)
         print("visited : " + str(visited))
+        print("\n")
         
 
         if currentNode == targetNode:
-            print("calisttttttttttti")
             return get_path(startNode, targetNode)
             
 
         neighbours_of_current_node = find_neighbours(currentNode, targetNode)
         print("neighbours" + str(neighbours_of_current_node))
+        print("\n")
+        
         for neighbour in neighbours_of_current_node:
-            if in_list(n, visited):
-                print("calisti")
+            if in_list(neighbour, visited):
+                continue
                 
             new_cost_of_neighbour = currentNode.get_g() + get_distance(currentNode, neighbour)
             print("new_cost_of_neighbour " + str(new_cost_of_neighbour))
             if new_cost_of_neighbour < neighbour.get_g() or not in_list(neighbour, not_visited):
-                print("calisti - 2")
                 neighbour.set_g(new_cost_of_neighbour)
                 neighbour.set_h(get_distance(neighbour, targetNode))
                 neighbour.set_f()
@@ -141,7 +143,7 @@ def get_distance(node1, node2):
 dirs = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
 
 start = (0,0)
-end = (4,3)
+end = (4,0)
 
 def sum_coords(a,b):
     return (a.pos[0]+b[0], a.pos[1]+b[1])
@@ -160,6 +162,7 @@ def find_neighbours(this_node, target_node):
                     
         if all(is_well):        
             if map_data[n_pos[0]][n_pos[1]] != 0xb:
+                print("n : " + str(n_pos))
                 n = Node(n_pos)
                 n.set_g(get_distance(n, this_node))
                 n.set_h(get_distance(n, target_node))

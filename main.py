@@ -10,26 +10,22 @@ map_data = [
 ]
 
 class Node:
-    def __init__(self, parent_node, pos):
-        self.parent_node = parent_node
+    def __init__(self, pos, parentNode=None):
+        self.parent = parentNode
         self.pos = pos
 
         self.H = 0
         self.G = 0
         self.F = 0
 
-    def __eq__(self, other)
+    def __eq__(self, other):
         return self.pos == other.pos
 
-    def calc_distance(self, pos1, pos2):
-        # euclidean distance
-        return math.sqrt((pos1[0]-pos2[0])**2 + (pos1[1]-pos2[1])**2)
-
-    def set_h(self, target):
-        self.H = self.calc_distance(target, self.pos)
+    def set_h(self, cost):
+        self.H = cost
     
-    def set_g(self, current)
-        self.G = self.calc_distance(current.pos, self.pos)
+    def set_g(self, cost):
+        self.G = cost
     
     def set_f(self):
         self.F = self.H + self.G
@@ -48,23 +44,80 @@ def in_list(this_node, list):
         if this_node == node:
             return True 
 
-def path_finding(start_node):
-    openlist = [start_node]
-    closedlist = []
-    while current_node != target_node:
-        if current_node == target_node:
-            pass
-        else:
-            closedlist.append(current_node)
-            neighbours = find_neighbours(current_node)
-            for n in neighbours:
-                if n.get_g() < current_node.get_g() and in_list(n, closedlist):
-                    pass
-                elif n.get_g() > current_node.get_g() and in_list(n, openlist):
-                    pass
-                elif not in_list(n, openlist) and not in_list(n, closedlist):
-                    n.set_g(current_node)
-                    openlist.append(n)
+def find_lowest_node(list):
+    min_cost_f = list[0].get_f()
+    for node in list:
+        if node.get_f() < min_cost_f:
+            min_cost_f = node.get_f()
+    return min_cost_f
+
+def remove_node(this_node, list):
+    for node in list:
+        if node == this_node:
+            list.remove(node)
+    return list
+
+def find_path(start_pos, target_pos):
+    startNode = Node(start_pos)
+    targetNode = Node(target_pos)
+    
+    not_visited = []
+    visited = []
+
+    not_visited.append(startNode)
+
+    while len(not_visited) > 0:
+        currentNode = not_visited[0]
+        for i, n in enumerate(not_visited):
+            if not_visited[i].get_f() < currentNode.get_f() or not_visited[i].get_f() == currentNode.get_f() and not_visited[i].get_h() < currentNode.get_h():
+                currentNode = not_visited[i]
+
+        not_visited = remove_node(currentNode, not_visited)
+        visited.append(currentNode)
+
+        if currentNode == targetNode:
+            return get_path(startNode, targetNode)
+            
+
+        neighbours_of_current_node = find_neighbours(currentNode) 
+        for neighbour in neighbours_of_current_node:
+            if in_list(n, visited):
+                continue
+            new_cost_of_neighbour = currentNode.get_g() + get_distance(currentNode, neighbour)
+            if new_cost_of_neighbour < neighbour.get_g() or not in_list(neighbour, not_visited):
+                neighbour.set_g(new_cost_of_neighbour)
+                neighbour.set_h(get_distance(neighbour, targetNode))
+                neighbour.parent = currentNode
+
+                if not in_list(neighbour, not_visited):
+                    not_visited.append(neighbour)
+
+def get_path(startNode, targetNode):
+    path = []
+    currentNode = targetNode
+
+    while currentNode != startNode:
+        path.append(currentNode)
+        currentNode =currentNode.parent
+
+    path.reverse()
+
+    return path
+
+def get_distance(node1, node2):
+    return math.sqrt((node1.pos1[0]-node2.pos2[0])**2 + (node1.pos1[1]-node2.pos2[1])**2)
+        # current_node = find_lowest_node(not_visited)
+        # not_visited = remove_node(current_node, not_visited)
+        # visited.append(current_node)
+
+        # if current_node == target_node:
+        #     break
+
+        # neighbours_of_current_node = find_neighbours(current_node) 
+        # for n in neighbours_of_current_node:
+        #     if in_list(n, visited):
+        #         continue
+        #     if 
                         
 dirs = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
 
@@ -72,7 +125,7 @@ start = (0,0)
 end = (3,4)
 
 def sum_coords(a,b):
-    return (a[0]+b[0], a[1]+b[1])
+    return (a.pos[0]+b[0], a.pos[1]+b[1])
 
 def find_neighbours(this_node):
     neighbours = []
@@ -87,16 +140,11 @@ def find_neighbours(this_node):
                     n_pos[1] <= len(map_data[0])-1, ]
                     
         if all(is_well):        
-            if map_data[n_pos[0]][n_pos[1]] != 0xb: 
-                neighbours.append(hex(map_data[n_pos[0]][n_pos[1]]))
+            if map_data[n_pos[0]][n_pos[1]] != 0xb:
+                neighbours.append(Node(n_pos))
     return neighbours
 
 def main():
-    print(find_neighbours(start))
-
-visited_nodes = []
-
-def find_path():
-    pass
+    print(find_path(start, end))
 
 main()

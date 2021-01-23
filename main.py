@@ -18,6 +18,9 @@ class Node:
         self.G = 0
         self.F = 0
 
+    def __repr__(self):
+        return "node: " + str(self.pos)
+
     def __eq__(self, other):
         return self.pos == other.pos
 
@@ -65,28 +68,43 @@ def find_path(start_pos, target_pos):
     visited = []
 
     not_visited.append(startNode)
-
+    print("not_visited -> 1 : " + str(not_visited)) 
     while len(not_visited) > 0:
+        print("not_visited -> 1 : " + str(not_visited)) 
+        
         currentNode = not_visited[0]
         for i, n in enumerate(not_visited):
-            if not_visited[i].get_f() < currentNode.get_f() or not_visited[i].get_f() == currentNode.get_f() and not_visited[i].get_h() < currentNode.get_h():
-                currentNode = not_visited[i]
-
-        not_visited = remove_node(currentNode, not_visited)
+            print(n)
+            if n.get_f() < currentNode.get_f() or n.get_f() == currentNode.get_f() and n.get_h() < currentNode.get_h():
+                currentNode = n
+        
+        print("not_visited : " + str(not_visited))
+        not_visited.remove(currentNode)
+        print("not_visited : " + str(not_visited))
+        
+        print("visited : " + str(visited))
         visited.append(currentNode)
+        print("visited : " + str(visited))
+        
 
         if currentNode == targetNode:
+            print("calisttttttttttti")
             return get_path(startNode, targetNode)
             
 
-        neighbours_of_current_node = find_neighbours(currentNode) 
+        neighbours_of_current_node = find_neighbours(currentNode, targetNode)
+        print("neighbours" + str(neighbours_of_current_node))
         for neighbour in neighbours_of_current_node:
             if in_list(n, visited):
-                continue
+                print("calisti")
+                
             new_cost_of_neighbour = currentNode.get_g() + get_distance(currentNode, neighbour)
+            print("new_cost_of_neighbour " + str(new_cost_of_neighbour))
             if new_cost_of_neighbour < neighbour.get_g() or not in_list(neighbour, not_visited):
+                print("calisti - 2")
                 neighbour.set_g(new_cost_of_neighbour)
                 neighbour.set_h(get_distance(neighbour, targetNode))
+                neighbour.set_f()
                 neighbour.parent = currentNode
 
                 if not in_list(neighbour, not_visited):
@@ -96,16 +114,17 @@ def get_path(startNode, targetNode):
     path = []
     currentNode = targetNode
 
-    while currentNode != startNode:
+    while currentNode == startNode:
+        print(currentNode)
         path.append(currentNode)
-        currentNode =currentNode.parent
 
-    path.reverse()
+        currentNode = currentNode.parent
 
+    
     return path
 
 def get_distance(node1, node2):
-    return math.sqrt((node1.pos1[0]-node2.pos2[0])**2 + (node1.pos1[1]-node2.pos2[1])**2)
+    return math.sqrt((node1.pos[0]-node2.pos[0])**2 + (node1.pos[1]-node2.pos[1])**2)
         # current_node = find_lowest_node(not_visited)
         # not_visited = remove_node(current_node, not_visited)
         # visited.append(current_node)
@@ -122,17 +141,17 @@ def get_distance(node1, node2):
 dirs = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
 
 start = (0,0)
-end = (3,4)
+end = (4,3)
 
 def sum_coords(a,b):
     return (a.pos[0]+b[0], a.pos[1]+b[1])
 
-def find_neighbours(this_node):
+def find_neighbours(this_node, target_node):
     neighbours = []
     for dir_ in dirs:
         # n_pos = this_node(x,y) + dir(x,y)
         n_pos = sum_coords(this_node, dir_)
-        print(n_pos)
+
         
         is_well = [ n_pos[0] >= 0, 
                     n_pos[1] >= 0, 
@@ -141,10 +160,14 @@ def find_neighbours(this_node):
                     
         if all(is_well):        
             if map_data[n_pos[0]][n_pos[1]] != 0xb:
-                neighbours.append(Node(n_pos))
+                n = Node(n_pos)
+                n.set_g(get_distance(n, this_node))
+                n.set_h(get_distance(n, target_node))
+                n.set_f()
+                neighbours.append(n)
     return neighbours
 
 def main():
-    print(find_path(start, end))
+    print("path :: " + str(find_path(start, end)))
 
 main()

@@ -117,7 +117,7 @@ def get_path(startNode, targetNode):
     currentNode = targetNode
 
     while currentNode == startNode:
-        print(currentNode)
+        print("path" + currentNode)
         path.append(currentNode)
 
         currentNode = currentNode.parent
@@ -126,7 +126,8 @@ def get_path(startNode, targetNode):
     return path
 
 def get_distance(node1, node2):
-    return math.sqrt((node1.pos[0]-node2.pos[0])**2 + (node1.pos[1]-node2.pos[1])**2)
+    # return math.sqrt((node1.pos[0]-node2.pos[0])**2 + (node1.pos[1]-node2.pos[1])**2)
+    return abs(node1.pos[0]-node2.pos[0]) + abs(node1.pos[1]-node2.pos[1])
         # current_node = find_lowest_node(not_visited)
         # not_visited = remove_node(current_node, not_visited)
         # visited.append(current_node)
@@ -143,7 +144,7 @@ def get_distance(node1, node2):
 dirs = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
 
 start = (0,0)
-end = (4,0)
+end = (0,4)
 
 def sum_coords(a,b):
     return (a.pos[0]+b[0], a.pos[1]+b[1])
